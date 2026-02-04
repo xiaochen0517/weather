@@ -1,0 +1,8 @@
+.idea/
+
+buildDir/
+build/
+
+subprojects/**/
+!subprojects/*.wrap
+!subprojects/packagefiles/
