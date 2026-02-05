@@ -1,29 +1,30 @@
-#include <cjson/cJSON.h>
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "api.h"
+#include "jwt.h"
+#include "utils.h"
+
 int main(void) {
-    printf("Hello, World!\n");
-    // 创建 JSON 对象
-    cJSON *root = cJSON_CreateObject();
+  char *kid_str = getenv("API_KID");
+  if (!kid_str) {
+    fprintf(stderr, "Please set API_KID environment variable.\n");
+    return 1;
+  }
+  char *sub_str = getenv("API_SUB");
+  if (!sub_str) {
+    fprintf(stderr, "Please set API_SUB environment variable.\n");
+    return 1;
+  }
 
-    // 添加字段
-    cJSON_AddStringToObject(root, "name", "John");
-    cJSON_AddNumberToObject(root, "age", 30);
-    cJSON_AddBoolToObject(root, "active", 1);
+  const int64_t expiration_ms = 60 * 60; // 1 hour
+  char *jwt_token = get_jwt_token(kid_str, sub_str, expiration_ms,
+                                  "/home/masonlee/.ssh/ed25519-private.pem");
+  printf("Token: %s\n", jwt_token);
 
-    // 转换为字符串
-    char *json_str = cJSON_Print(root);
-    printf("生成的 JSON:\n%s\n", json_str);
+  Weather weather = {0};
+  get_weather_by_day(&weather, jwt_token);
 
-    // 解析 JSON
-    cJSON *name = cJSON_GetObjectItem(root, "name");
-    if (name && name->type == cJSON_String) {
-        printf("name 字段: %s\n", name->valuestring);
-    }
-
-    // 释放内存
-    free(json_str);
-    cJSON_Delete(root);
-    return 0;
+  free(jwt_token);
+  return 0;
 }

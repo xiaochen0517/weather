@@ -1,7 +1,10 @@
 .idea/
 
 buildDir/
+builddir/
 build/
+
+cache/
 
 subprojects/**/
 !subprojects/*.wrap
