@@ -5,6 +5,7 @@
 #include "jansson.h"
 #include "jwt.h"
 #include "utils.h"
+#include "parser.h"
 
 
 char *get_weather() {
@@ -75,5 +76,16 @@ int main(void) {
   char *pretty_json = json_dumps(data, JSON_INDENT(2));
   printf("Parsed JSON Data:\n%s\n", pretty_json);
 
+  DayWeathers *day_weathers = malloc(sizeof(DayWeathers));
+  parse_weather_days_json(day_weathers, json_str);
+
+  for (int i = 0; i < day_weathers->count; i++) {
+    const DayWeather day = day_weathers->days[i];
+    printf("Date: %s, Max Temp: %s, Min Temp: %s, Day Weather: %s, Night Weather: %s\n",
+           day.fxDate, day.tempMax, day.tempMin, day.textDay, day.textNight);
+  }
+
+  free_day_weathers(day_weathers);
+  free(day_weathers);
   return 0;
 }

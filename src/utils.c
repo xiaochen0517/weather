@@ -2,6 +2,8 @@
 // Created by masonlee on 2026/2/5.
 //
 
+#include <stdlib.h>
+
 #include "utils.h"
 
 char *base64_decode(const char *input, int *length) {
@@ -54,4 +56,20 @@ char *base64_encode(const char *input, const int length) {
 
   BIO_free_all(bio);
   return buf;
+}
+
+char *str_duplicate(const char *src) {
+  if (src == NULL) {
+    fprintf(stderr, "Error: NULL string cannot be duplicated.\n");
+    exit(1);
+  }
+  size_t len = strlen(src);
+  char *dest = malloc(len + 1);
+  if (dest == NULL) {
+    fprintf(stderr, "Error: Memory allocation failed in str_duplicate.\n");
+    exit(1);
+  }
+  strcpy(dest, src);
+  dest[len] = '\0';
+  return dest;
 }

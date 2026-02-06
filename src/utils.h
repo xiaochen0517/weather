@@ -13,4 +13,6 @@
 char *base64_decode(const char *input, int *length);
 char *base64_encode(const char *input, int length);
 
+char *str_duplicate(const char *src);
+
 #endif // WEATHER_UTILS_H

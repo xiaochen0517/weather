@@ -11,6 +11,7 @@ sources = [
         'src/api.c',
         'src/utils.c',
         'src/jwt.c',
+        'src/parser.c',
 ]
 
 weather = executable(
