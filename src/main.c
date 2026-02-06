@@ -3,6 +3,7 @@
 
 #include "api.h"
 #include "jwt.h"
+#include "output.h"
 #include "parser.h"
 #include "utils.h"
 
@@ -33,17 +34,21 @@ int main(void) {
   // 初始化配置
   w_config_init();
   // 获取天气数据
-  printf("Loading weather data...");
+  printf("Loading weather data...\n");
   char *json_str = get_weather();
   // 开始解析
   DayWeathers *day_weathers = malloc(sizeof(DayWeathers));
   parse_weather_days_json(day_weathers, json_str);
+  free(json_str);
   // 测试输出
   for (int i = 0; i < day_weathers->count; i++) {
     const DayWeather day = day_weathers->days[i];
     w_log("Date: %s, Max Temp: %s, Min Temp: %s, Day Weather: %s, Night Weather: %s\n",
            day.fxDate, day.tempMax, day.tempMin, day.textDay, day.textNight);
   }
+
+  print_weather_days(day_weathers);
+
   // 释放资源
   free_day_weathers(day_weathers);
   free(day_weathers);
