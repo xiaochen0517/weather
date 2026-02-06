@@ -12,6 +12,7 @@
 
 #include <openssl/err.h>
 
+__attribute__((unused))
 static void remove_last_equals(char *str) {
   const size_t len = strlen(str);
   for (size_t i = len; i > 0; i--) {
@@ -80,6 +81,7 @@ static EVP_PKEY *read_ed25519_key(const char *key_path) {
   return pkey;
 }
 
+__attribute__((unused))
 static EVP_PKEY *read_ed25519_public_key(const char *key_path) {
   FILE *key_file = fopen(key_path, "r");
   if (!key_file) {
@@ -119,7 +121,7 @@ static char *signature(const char *str, EVP_PKEY *private_key) {
 
   EVP_MD_CTX_free(mdctx);
 
-  printf("Signature length: %zu\n", sig_len);
+  w_log("Signature length: %zu\n", sig_len);
   char *sig_b64 = base64_encode((char *)sig_buf, (int)sig_len);
   return sig_b64;
 }
@@ -127,11 +129,11 @@ static char *signature(const char *str, EVP_PKEY *private_key) {
 char *get_jwt_token(const char *kid, const char *sub, int64_t expiration_ms,
                     const char *signature_key_path) {
   char *header_payload = get_header_payload(kid, sub, expiration_ms);
-  printf("Header.Payload: %s\n", header_payload);
+  w_log("Header.Payload: %s\n", header_payload);
 
   EVP_PKEY *private_key = read_ed25519_key(signature_key_path);
   char *sig_str = signature(header_payload, private_key);
-  printf("Signature: %s\n", sig_str);
+  w_log("Signature: %s\n", sig_str);
 
   const size_t jwt_length =
       sizeof(char) * (strlen(header_payload) + strlen(sig_str) + 2);

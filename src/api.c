@@ -8,18 +8,19 @@
 #include <string.h>
 
 #include "api.h"
+#include "utils.h"
 
 // 回调函数：处理curl返回的数据
 static size_t write_callback(void *contents, size_t size, size_t nmemb,
                              void *userp) {
-  printf("Write callback called, size: %d\n", size);
+  w_log("Write callback called, size: %d\n", size);
   const size_t realsize = size * nmemb;
   MemoryStruct *mem = (MemoryStruct *)userp;
 
   char *ptr = realloc(mem->memory, mem->size + realsize + 1);
   if (ptr == NULL) {
     // 内存分配失败
-    printf("Not enough memory (realloc returned NULL)\n");
+    w_log("Not enough memory (realloc returned NULL)\n");
     return 0;
   }
 
@@ -31,8 +32,8 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb,
   return realsize;
 }
 
-void get_weather_by_day(Weather *weather, const char *token) {
-  printf("Start curl request.\n");
+char *get_weather_json_by_days(const char *token) {
+  w_log("Start curl request.\n");
   CURL *curl = curl_easy_init();
   if (curl == NULL) {
     perror("CURL init error.");
@@ -60,11 +61,11 @@ void get_weather_by_day(Weather *weather, const char *token) {
   if (res != CURLE_OK) {
     fprintf(stderr, "CURL request failed: %s\n", curl_easy_strerror(res));
   } else {
-    printf("CURL request succeeded.\n");
-    printf("Response: %s\n", chunk.memory);
+    w_log("CURL request succeeded.\n");
+    w_log("Response: %s\n", chunk.memory);
   }
 
   curl_slist_free_all(headers);
   curl_easy_cleanup(curl);
-  free(chunk.memory);
+  return chunk.memory;
 }

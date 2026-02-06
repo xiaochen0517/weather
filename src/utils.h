@@ -5,14 +5,14 @@
 #ifndef WEATHER_UTILS_H
 #define WEATHER_UTILS_H
 
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/evp.h>
-#include <string.h>
+int w_config_init(void);
 
 char *base64_decode(const char *input, int *length);
 char *base64_encode(const char *input, int length);
 
 char *str_duplicate(const char *src);
+
+void w_log(const char *msg, ...);
+void w_log_error(const char *msg, ...);
 
 #endif // WEATHER_UTILS_H

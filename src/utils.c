@@ -3,8 +3,22 @@
 //
 
 #include <stdlib.h>
+#include <openssl/bio.h>
+#include <openssl/buffer.h>
+#include <openssl/evp.h>
+#include <string.h>
 
 #include "utils.h"
+
+int debug = 0;
+
+int w_config_init(void) {
+  const char *debug_mode = getenv("W_DEBUG_MODE");
+  if (debug_mode != NULL && strcmp(debug_mode, "1") == 0) {
+    debug = 1;
+  }
+  return 1;
+}
 
 char *base64_decode(const char *input, int *length) {
   char *buffer = malloc(strlen(input));
@@ -72,4 +86,21 @@ char *str_duplicate(const char *src) {
   strcpy(dest, src);
   dest[len] = '\0';
   return dest;
+}
+
+void w_log(const char *msg, ...) {
+  if (!debug) {
+    return;
+  }
+  va_list args;
+  va_start(args, msg);
+  vprintf(msg, args);
+  va_end(args);
+}
+
+void w_log_error(const char *msg, ...) {
+  va_list args;
+  va_start(args, msg);
+  vfprintf(stderr, msg, args);
+  va_end(args);
 }
