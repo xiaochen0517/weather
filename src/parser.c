@@ -39,6 +39,10 @@ void parse_command_args(CommandArgs *command_args, const int argc,
       exit(1);
     }
     const int day_size = str_to_int(argv[2]);
+    if (day_size != 3 && day_size != 7 && day_size != 10 && day_size != 15 && day_size != 30) {
+      fprintf(stderr, "Error: day_size must be one of 3, 7, 10, 15, or 30.\n");
+      exit(1);
+    }
     command_args->day_size = day_size;
     command_args->location_id = str_duplicate(argv[3]);
   } else {

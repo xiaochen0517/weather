@@ -31,6 +31,7 @@ char *get_token(void) {
 }
 
 void get_location(const CommandArgs *command_args) {
+  printf("Loading location data...\n");
   char *jwt_token = get_token();
   char *location_json = get_geoid_by_location(command_args->location_name, jwt_token);
   free(jwt_token);
@@ -39,7 +40,7 @@ void get_location(const CommandArgs *command_args) {
   parse_location_json(locations, location_json );
   free(location_json );
   for (int i = 0; i < locations->count; i++) {
-    Location loc = locations->locations[i];
+    const Location loc = locations->locations[i];
     w_log(
         "Name: %s, ID: %s, Lat: %s, Adm1: %s, Adm2: %s, Country: %s, Tz: %s\n",
         loc.name, loc.id, loc.lat, loc.adm1, loc.adm2, loc.country, loc.tz);
@@ -74,7 +75,7 @@ void days_weather(const CommandArgs *command_args) {
   free(day_weathers);
 }
 
-int main(int argc, char *argv[]) {
+int main(const int argc, char *argv[]) {
   // 初始化配置
   w_config_init();
 
