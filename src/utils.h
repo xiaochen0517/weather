@@ -15,4 +15,6 @@ char *str_duplicate(const char *src);
 void w_log(const char *msg, ...);
 void w_log_error(const char *msg, ...);
 
+int str_to_int(const char *str);
+
 #endif // WEATHER_UTILS_H

@@ -2,13 +2,15 @@
 // Created by masonlee on 2026/2/5.
 //
 
-#include <stdlib.h>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/evp.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "utils.h"
+
+#include <errno.h>
 
 int debug = 0;
 
@@ -103,4 +105,18 @@ void w_log_error(const char *msg, ...) {
   va_start(args, msg);
   vfprintf(stderr, msg, args);
   va_end(args);
+}
+
+int str_to_int(const char *str) {
+  errno = 0;
+  char *endptr;
+  const long val = strtol(str, &endptr, 10);
+
+  if (errno != 0 || endptr == str || *endptr != '\0' || val > INT32_MAX ||
+      val < INT32_MIN) {
+    fprintf(stderr, "Error converting string to int: %s\n", str);
+    exit(1);
+  }
+
+  return (int)val;
 }

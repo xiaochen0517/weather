@@ -5,6 +5,17 @@
 #ifndef WEATHER_PARSER_H
 #define WEATHER_PARSER_H
 
+typedef struct CommandArgs {
+  char *command;
+  char *location_name;
+  int day_size;
+  char *location_id;
+} CommandArgs;
+
+void parse_command_args(CommandArgs *command_args, int argc, char *argv[]);
+
+void free_command_args(const CommandArgs *command_args);
+
 typedef struct DayWeather {
   // 日期
   char *fxDate;
@@ -47,5 +58,30 @@ int parse_weather_days_json(DayWeathers *day_weathers, const char *json_str);
 
 void free_day_weather(DayWeather *day_weather);
 void free_day_weathers(DayWeathers *day_weathers);
+
+typedef struct Location {
+  char *name;
+  char *id;
+  char *lat;
+  char *adm1;
+  char *adm2;
+  char *country;
+  char *tz;
+  char *utcOffset;
+  char *isDest;
+  char *type;
+  char *rank;
+  char *fxLink;
+} Location;
+
+typedef struct Locations {
+  Location *locations;
+  int count;
+} Locations;
+
+int parse_location_json(Locations *locations, const char *json_str);
+
+void free_location(Location *location);
+void free_locations(Locations *locations);
 
 #endif // WEATHER_PARSER_H

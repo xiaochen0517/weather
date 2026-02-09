@@ -10,6 +10,7 @@ typedef struct MemoryStruct {
   size_t size;
 } MemoryStruct;
 
-char *get_weather_json_by_days(const char *token);
+char *get_geoid_by_location(const char *location, const char *token);
+char *get_weather_json_by_days(int day_size, const char *location_id, const char *token);
 
 #endif // WEATHER_API_H

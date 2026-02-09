@@ -32,12 +32,10 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb,
   return realsize;
 }
 
-char *get_weather_json_by_days(const char *token) {
+static char *http_api_request(const char *url, const char *token, CURL *curl) {
   w_log("Start curl request.\n");
-  CURL *curl = curl_easy_init();
   if (curl == NULL) {
-    perror("CURL init error.");
-    exit(1);
+    curl = curl_easy_init();
   }
 
   MemoryStruct chunk;
@@ -50,9 +48,7 @@ char *get_weather_json_by_days(const char *token) {
   headers = curl_slist_append(headers, auth_header);
 
   curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-  curl_easy_setopt(
-      curl, CURLOPT_URL,
-      "https://jw564k2gn9.re.qweatherapi.com/v7/weather/3d?location=101010100");
+  curl_easy_setopt(curl, CURLOPT_URL, url);
   curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "gzip");
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
@@ -68,4 +64,27 @@ char *get_weather_json_by_days(const char *token) {
   curl_slist_free_all(headers);
   curl_easy_cleanup(curl);
   return chunk.memory;
+}
+
+char *get_geoid_by_location(const char *location, const char *token) {
+  w_log("Start get geoid request.\n");
+  CURL *curl = curl_easy_init();
+  // 使用 curl_easy_escape 进行编码
+  char *encoded = curl_easy_escape(curl, location, (int)strlen(location));
+  char url[512];
+  snprintf(
+      url, sizeof(url),
+      "https://jw564k2gn9.re.qweatherapi.com/geo/v2/city/lookup?location=%s",
+      encoded);
+  return http_api_request(url, token, curl);
+}
+
+char *get_weather_json_by_days(const int day_size, const char *location_id,
+                               const char *token) {
+  w_log("Start get weather request.\n");
+  char url[512];
+  snprintf(url, sizeof(url),
+           "https://jw564k2gn9.re.qweatherapi.com/v7/weather/%dd?location=%s",
+           day_size, location_id);
+  return http_api_request(url, token, NULL);
 }
